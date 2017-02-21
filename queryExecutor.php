@@ -48,6 +48,42 @@ case "createTable":
     }
     break;
 
+case "Alter_Add":
+	$DB_Name=$_POST['dbName'];
+	$query_Stat=$_POST['Query'];
+	if($conn->select_db($DB_Name))
+    {
+      $sql = $query_Stat;
+      if ($conn->query($sql) === TRUE) {
+          echo "Table Altered successfully";
+      } else {
+          echo "Error Altering table: " . $conn->error;
+      }
+    }
+    else {
+      echo "Database is not selected..!";
+    }
+    break;
+	
+	
+case "Alter_Drop":
+	$DB_Name=$_POST['dbName'];
+	$query_Stat=$_POST['Query'];
+	if($conn->select_db($DB_Name))
+    {
+      $sql = $query_Stat;
+      if ($conn->query($sql) === TRUE) {
+          echo "Table Altered successfully";
+      } else {
+          echo "Error Altering table: " . $conn->error;
+      }
+    }
+    else {
+      echo "Database is not selected..!";
+    }
+    break;
+	
+	
 case "DropTable":
 	$DB_Name=$_POST['dbName'];
 	$query_Stat=$_POST['Query'];
