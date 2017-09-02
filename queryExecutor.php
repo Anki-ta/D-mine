@@ -408,24 +408,25 @@ case "updateselectall":
 		$primarykeyname = $primarykeydata[4];
 
 		//echo headings
-		echo "<tr><th></th>";
+		echo "<tr>";
 		while ($fieldinfo=mysqli_fetch_field($result))
 		{
 			echo"<th> $fieldinfo->name </th>";
 			echo"<th></th>";
 		}
-		echo "</tr>";
+		echo "<th></th></tr>";
 			
 		while($data = mysqli_fetch_array($result,MYSQL_BOTH))
 		{
 			
 			
 			echo "<tr>";
-			echo "<td><button id='' class='w3-btn w3-round-xxlarge w3-small w3-blue-grey' onclick=\"update('".$primarykeyname."',".$data[$primarykeyname].")\">Update</button></td>";
+
 			for($i=0;$i<count($data)-count($data)/2;$i++)
 			{
 				echo"<td>$data[$i]<td>";
 			}
+            echo "<td><button id='' class='w3-btn w3-round-xxlarge w3-small w3-blue-grey' onclick=\"update('".$primarykeyname."',".$data[$primarykeyname].")\">Update</button></td>";
 			echo "</tr>";
 		}
 		
@@ -511,24 +512,25 @@ case "deleteselectall":
 		$primarykeyname = $primarykeydata[4];
 
 		//echo headings
-		echo "<tr><th></th>";
+		echo "<tr>";
 		while ($fieldinfo=mysqli_fetch_field($result))
 		{
 			echo"<th> $fieldinfo->name </th>";
 			echo"<th></th>";
 		}
-		echo "</tr>";
+		echo "<th></th></tr>";
 			
 		while($data = mysqli_fetch_array($result,MYSQL_BOTH))
 		{
 			
 			
 			echo "<tr>";
-			echo "<td><button id='' class='w3-btn w3-round-xxlarge w3-small w3-blue-grey' onclick=\"deleterow('".$primarykeyname."',".$data[$primarykeyname].")\">Delete</button></td>";
+
 			for($i=0;$i<count($data)-count($data)/2;$i++)
 			{
 				echo"<td>$data[$i]<td>";
 			}
+            echo "<td><button id='' class='w3-btn w3-round-xxlarge w3-small w3-blue-grey' onclick=\"deleterow('".$primarykeyname."',".$data[$primarykeyname].")\">Delete</button></td>";
 			echo "</tr>";
 		}
 		
@@ -539,7 +541,24 @@ case "deleteselectall":
 	}
 	break;
 
-case "delete":
+    case "CreateViewExecution":
+        $DB_Name=$_POST['db_Name'];
+        $query_Stat=$_POST['ViewCmd'];
+        if($conn->select_db($DB_Name))
+        {
+            $sql = $query_Stat;
+            if ($conn->query($sql) === TRUE) {
+                echo "View created successfully";
+            } else {
+                echo "Error creating table: " . $conn->error;
+            }
+        }
+        else {
+            echo "Database is not selected..!";
+        }
+        break;
+
+    case "delete":
 	$DB_Name=$_POST['dbName'];
 	$query_Stat=$_POST['Query'];
 	if($conn->select_db($DB_Name))
@@ -555,6 +574,69 @@ case "delete":
 		echo "Database does not exist";
 	}
 	break;
+
+    case "dropView":
+        $drop_view=$_POST['dpViewName'];
+        $DB_Name=$_POST['dbName'];
+        $query_Stat=$_POST['Query'];
+        if($conn->select_db($DB_Name))
+        {
+            if(mysqli_query($conn,$query_Stat) == true)
+            {
+                echo "View Dropped successfully";
+            }
+            else
+            {
+                echo "View not exist in database";
+            }
+        }
+        else
+        {
+            echo "Database does not exist";
+        }
+        break;
+
+    case "renameView":
+        $DB_Name=$_POST['dbName'];
+        $query_Stat=$_POST['Query'];
+        if($conn->select_db($DB_Name))
+        {
+            if(mysqli_query($conn,$query_Stat) == true)
+            {
+                echo "View Rename sucessfully";
+            }
+            else
+            {
+                echo "View not exists in database";
+            }
+        }
+        else
+        {
+            echo "Database does not exist";
+        }
+        break;
+
+    case "getviewslist":
+        $DB_Name=$_POST['dbName'];
+        $query=$_POST['Query'];
+        if($conn->select_db($DB_Name))
+        {
+            $result = $conn->query($query);
+            $rowCount = $result->num_rows;
+            echo "<option value=''>Select View</option>";
+            /* fetch associative array */
+            for($i=0; $i<$rowCount; $i++)
+            {
+                $result->data_seek($i);
+                $row = $result->fetch_array(MYSQL_NUM);
+                echo "<option value='".$row[0]."'>".$row[0]."</option>";
+            }
+            /* free result set */
+            $result->free();
+        }else{
+            echo "Database does not exist";
+        }
+        break;
 	
     default:
         echo "Nothing to show";
